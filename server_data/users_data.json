@@ -1,0 +1,32 @@
+{
+ "mobileNoToId": {
+  "1234567890": 3195105854,
+  "8120387578": 2898066647
+ },
+ "usersData": {
+  "1640129221": {
+   "name": "shubham",
+   "userId": 1640129221,
+   "profilePic": "",
+   "mobileNo": "8120387578",
+   "status": "",
+   "metadata": null
+  },
+  "2898066647": {
+   "name": "shubhamasati",
+   "userId": 2898066647,
+   "profilePic": "",
+   "mobileNo": "8120387578",
+   "status": "",
+   "metadata": null
+  },
+  "3195105854": {
+   "name": "avira",
+   "userId": 3195105854,
+   "profilePic": "",
+   "mobileNo": "1234567890",
+   "status": "",
+   "metadata": null
+  }
+ }
+}

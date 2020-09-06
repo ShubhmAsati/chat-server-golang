@@ -1,0 +1,85 @@
+syntax="proto3";
+
+package user_grpc;
+
+//service defination
+service UserService{
+  rpc add(User) returns (AddUserResponse);
+  rpc getUserByMobileNos(GetUserByMobileNosRequest) returns (GetUserByMobileNosResponse);
+  rpc uploadProfilePic(UploadProfilePicRequest) returns (StatusOkResponse);
+  rpc setMyStatus(UserStatus) returns (StatusOkResponse);
+  rpc iamTyping(Typing) returns (StatusOkResponse);
+  rpc loadMyMessages(User) returns (MyMessages);
+  rpc getUserByUserId(getUserByUserIdRequest) returns (User);
+}
+
+message User {
+  string name=1;
+  uint32 userId=2;
+  string profilePic=3;
+  string mobileNo=4;
+  string status=5;
+}
+
+message UserMetadata {
+  bool isActive=1;
+  bool isTyping=2;
+  uint32 typingToId=3;
+}
+
+message AddUserResponse{
+  uint32 id=1;
+  Error err=2;
+}
+
+message GetUserByMobileNosRequest{
+   repeated string mobileNos=1;
+}
+
+message GetUserByMobileNosResponse{
+ repeated User user=1;
+}
+
+message UploadProfilePicRequest{
+  string profilePicPath=1;
+  User user=2;
+}
+
+message StatusOkResponse{
+   string message=1;
+   int32 successCode=2;
+   Error err=3;
+}
+
+message Error{
+  string errorMsg =1;
+  int32 errorCode=2;
+  string errorDetails=3;
+}
+
+message UserStatus{
+  bool isActive=1;
+  string UTCtimeStamp=2;
+  User user=3;
+}
+
+message Typing{
+  uint32 to =1;
+  User user=2;
+}
+
+
+message MyMessages{
+  repeated UserMsg userMsg=1;
+  Error error=2;
+}
+
+message UserMsg {
+  int32 from=1;
+  string msg=2;
+}
+
+
+message getUserByUserIdRequest{
+  uint32 userId=1; 
+}
