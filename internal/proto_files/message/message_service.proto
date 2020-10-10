@@ -9,7 +9,7 @@ service Message{
 }
 
 message UserById{
-    uint32 userId=1;
+    string userId=1;
 }
 message Msg{ 
     string msgId=1;
@@ -25,8 +25,8 @@ message UserChatMessage{
     };
     notification_type nt=1;
     bool isGroup=2;
-    uint32 fromUserId=3;
-    uint32 toUserId=4;
+    string fromUserId=3;
+    string toUserId=4;
     Msg msg=6;
     string chatId=7;
     string sentUtcTimeStamp=8;

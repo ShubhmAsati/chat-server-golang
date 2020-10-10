@@ -1,2 +1,56 @@
 {
+ "mobileNoToId": {
+  "1234567890": "226591628",
+  "1234567898": "687206642",
+  "1234567899": "541082386",
+  "2585255222": "3964389486",
+  "8120387578": "2014077376"
+ },
+ "usersData": {
+  "2014077376": {
+   "firstName": "shubham",
+   "userName": "comitbits",
+   "userId": "2014077376",
+   "profilePic": "",
+   "mobileNo": "8120387578",
+   "status": "",
+   "metadata": null
+  },
+  "226591628": {
+   "firstName": "dummy",
+   "userName": "goru",
+   "userId": "226591628",
+   "profilePic": "",
+   "mobileNo": "1234567890",
+   "status": "",
+   "metadata": null
+  },
+  "3964389486": {
+   "firstName": "shubham",
+   "userName": "hello",
+   "userId": "3964389486",
+   "profilePic": "",
+   "mobileNo": "2585255222",
+   "status": "",
+   "metadata": null
+  },
+  "541082386": {
+   "firstName": "gum",
+   "userName": "goru1",
+   "userId": "541082386",
+   "profilePic": "",
+   "mobileNo": "1234567899",
+   "status": "",
+   "metadata": null
+  },
+  "687206642": {
+   "firstName": "goru2",
+   "userName": "goru2",
+   "userId": "687206642",
+   "profilePic": "",
+   "mobileNo": "1234567898",
+   "status": "",
+   "metadata": null
+  }
+ }
 }

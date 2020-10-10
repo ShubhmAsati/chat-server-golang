@@ -18,12 +18,12 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	Add(ctx context.Context, in *User, opts ...grpc.CallOption) (*AddUserResponse, error)
-	GetUserByMobileNos(ctx context.Context, in *GetUserByMobileNosRequest, opts ...grpc.CallOption) (*GetUserByMobileNosResponse, error)
 	UploadProfilePic(ctx context.Context, in *UploadProfilePicRequest, opts ...grpc.CallOption) (*StatusOkResponse, error)
-	SetMyStatus(ctx context.Context, in *UserStatus, opts ...grpc.CallOption) (*StatusOkResponse, error)
-	IamTyping(ctx context.Context, in *Typing, opts ...grpc.CallOption) (*StatusOkResponse, error)
 	LoadMyMessages(ctx context.Context, in *User, opts ...grpc.CallOption) (*MyMessages, error)
 	GetUserByUserId(ctx context.Context, in *GetUserByUserIdRequest, opts ...grpc.CallOption) (*User, error)
+	Update(ctx context.Context, in *User, opts ...grpc.CallOption) (*StatusOkResponse, error)
+	SearchUsersByUserName(ctx context.Context, in *GetUserByUserNameRequest, opts ...grpc.CallOption) (*SearchUsersByUserNameResponse, error)
+	GetExistingUserNames(ctx context.Context, in *GetExistingUserNamesRequest, opts ...grpc.CallOption) (*GetExistingUserNamesResponse, error)
 }
 
 type userServiceClient struct {
@@ -43,36 +43,9 @@ func (c *userServiceClient) Add(ctx context.Context, in *User, opts ...grpc.Call
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserByMobileNos(ctx context.Context, in *GetUserByMobileNosRequest, opts ...grpc.CallOption) (*GetUserByMobileNosResponse, error) {
-	out := new(GetUserByMobileNosResponse)
-	err := c.cc.Invoke(ctx, "/user_grpc.UserService/getUserByMobileNos", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userServiceClient) UploadProfilePic(ctx context.Context, in *UploadProfilePicRequest, opts ...grpc.CallOption) (*StatusOkResponse, error) {
 	out := new(StatusOkResponse)
 	err := c.cc.Invoke(ctx, "/user_grpc.UserService/uploadProfilePic", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) SetMyStatus(ctx context.Context, in *UserStatus, opts ...grpc.CallOption) (*StatusOkResponse, error) {
-	out := new(StatusOkResponse)
-	err := c.cc.Invoke(ctx, "/user_grpc.UserService/setMyStatus", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) IamTyping(ctx context.Context, in *Typing, opts ...grpc.CallOption) (*StatusOkResponse, error) {
-	out := new(StatusOkResponse)
-	err := c.cc.Invoke(ctx, "/user_grpc.UserService/iamTyping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,17 +70,44 @@ func (c *userServiceClient) GetUserByUserId(ctx context.Context, in *GetUserByUs
 	return out, nil
 }
 
+func (c *userServiceClient) Update(ctx context.Context, in *User, opts ...grpc.CallOption) (*StatusOkResponse, error) {
+	out := new(StatusOkResponse)
+	err := c.cc.Invoke(ctx, "/user_grpc.UserService/update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SearchUsersByUserName(ctx context.Context, in *GetUserByUserNameRequest, opts ...grpc.CallOption) (*SearchUsersByUserNameResponse, error) {
+	out := new(SearchUsersByUserNameResponse)
+	err := c.cc.Invoke(ctx, "/user_grpc.UserService/searchUsersByUserName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetExistingUserNames(ctx context.Context, in *GetExistingUserNamesRequest, opts ...grpc.CallOption) (*GetExistingUserNamesResponse, error) {
+	out := new(GetExistingUserNamesResponse)
+	err := c.cc.Invoke(ctx, "/user_grpc.UserService/getExistingUserNames", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	Add(context.Context, *User) (*AddUserResponse, error)
-	GetUserByMobileNos(context.Context, *GetUserByMobileNosRequest) (*GetUserByMobileNosResponse, error)
 	UploadProfilePic(context.Context, *UploadProfilePicRequest) (*StatusOkResponse, error)
-	SetMyStatus(context.Context, *UserStatus) (*StatusOkResponse, error)
-	IamTyping(context.Context, *Typing) (*StatusOkResponse, error)
 	LoadMyMessages(context.Context, *User) (*MyMessages, error)
 	GetUserByUserId(context.Context, *GetUserByUserIdRequest) (*User, error)
+	Update(context.Context, *User) (*StatusOkResponse, error)
+	SearchUsersByUserName(context.Context, *GetUserByUserNameRequest) (*SearchUsersByUserNameResponse, error)
+	GetExistingUserNames(context.Context, *GetExistingUserNamesRequest) (*GetExistingUserNamesResponse, error)
 	MustEmbedUnimplementedUserServiceServer()
 }
 
@@ -118,23 +118,23 @@ type UnimplementedUserServiceServer struct {
 func (*UnimplementedUserServiceServer) Add(context.Context, *User) (*AddUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
 }
-func (*UnimplementedUserServiceServer) GetUserByMobileNos(context.Context, *GetUserByMobileNosRequest) (*GetUserByMobileNosResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserByMobileNos not implemented")
-}
 func (*UnimplementedUserServiceServer) UploadProfilePic(context.Context, *UploadProfilePicRequest) (*StatusOkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadProfilePic not implemented")
-}
-func (*UnimplementedUserServiceServer) SetMyStatus(context.Context, *UserStatus) (*StatusOkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetMyStatus not implemented")
-}
-func (*UnimplementedUserServiceServer) IamTyping(context.Context, *Typing) (*StatusOkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IamTyping not implemented")
 }
 func (*UnimplementedUserServiceServer) LoadMyMessages(context.Context, *User) (*MyMessages, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadMyMessages not implemented")
 }
 func (*UnimplementedUserServiceServer) GetUserByUserId(context.Context, *GetUserByUserIdRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserByUserId not implemented")
+}
+func (*UnimplementedUserServiceServer) Update(context.Context, *User) (*StatusOkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (*UnimplementedUserServiceServer) SearchUsersByUserName(context.Context, *GetUserByUserNameRequest) (*SearchUsersByUserNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchUsersByUserName not implemented")
+}
+func (*UnimplementedUserServiceServer) GetExistingUserNames(context.Context, *GetExistingUserNamesRequest) (*GetExistingUserNamesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetExistingUserNames not implemented")
 }
 func (*UnimplementedUserServiceServer) MustEmbedUnimplementedUserServiceServer() {}
 
@@ -160,24 +160,6 @@ func _UserService_Add_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetUserByMobileNos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserByMobileNosRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).GetUserByMobileNos(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user_grpc.UserService/GetUserByMobileNos",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserByMobileNos(ctx, req.(*GetUserByMobileNosRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserService_UploadProfilePic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UploadProfilePicRequest)
 	if err := dec(in); err != nil {
@@ -192,42 +174,6 @@ func _UserService_UploadProfilePic_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).UploadProfilePic(ctx, req.(*UploadProfilePicRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_SetMyStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserStatus)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).SetMyStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user_grpc.UserService/SetMyStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).SetMyStatus(ctx, req.(*UserStatus))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_IamTyping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Typing)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).IamTyping(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user_grpc.UserService/IamTyping",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).IamTyping(ctx, req.(*Typing))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -268,6 +214,60 @@ func _UserService_GetUserByUserId_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user_grpc.UserService/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Update(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SearchUsersByUserName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByUserNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SearchUsersByUserName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user_grpc.UserService/SearchUsersByUserName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SearchUsersByUserName(ctx, req.(*GetUserByUserNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetExistingUserNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetExistingUserNamesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetExistingUserNames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user_grpc.UserService/GetExistingUserNames",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetExistingUserNames(ctx, req.(*GetExistingUserNamesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _UserService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "user_grpc.UserService",
 	HandlerType: (*UserServiceServer)(nil),
@@ -277,20 +277,8 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_Add_Handler,
 		},
 		{
-			MethodName: "getUserByMobileNos",
-			Handler:    _UserService_GetUserByMobileNos_Handler,
-		},
-		{
 			MethodName: "uploadProfilePic",
 			Handler:    _UserService_UploadProfilePic_Handler,
-		},
-		{
-			MethodName: "setMyStatus",
-			Handler:    _UserService_SetMyStatus_Handler,
-		},
-		{
-			MethodName: "iamTyping",
-			Handler:    _UserService_IamTyping_Handler,
 		},
 		{
 			MethodName: "loadMyMessages",
@@ -299,6 +287,18 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getUserByUserId",
 			Handler:    _UserService_GetUserByUserId_Handler,
+		},
+		{
+			MethodName: "update",
+			Handler:    _UserService_Update_Handler,
+		},
+		{
+			MethodName: "searchUsersByUserName",
+			Handler:    _UserService_SearchUsersByUserName_Handler,
+		},
+		{
+			MethodName: "getExistingUserNames",
+			Handler:    _UserService_GetExistingUserNames_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

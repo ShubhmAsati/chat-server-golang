@@ -12,7 +12,7 @@ import (
 )
 
 type BufferedMessagesForUser struct {
-	Messages map[uint32][]*message_grpc.UserChatMessage
+	Messages map[string][]*message_grpc.UserChatMessage
 	mu       sync.Mutex
 }
 
@@ -20,7 +20,7 @@ var bufferedMessagesForUser BufferedMessagesForUser
 
 //MessageService wrapper for message
 type MessageService struct {
-	connectInfo map[uint32]ConnectInfo
+	connectInfo map[string]ConnectInfo
 	mu          sync.Mutex
 }
 
@@ -28,7 +28,7 @@ type ConnectInfo struct {
 	stream   *message_grpc.Message_ConnectServer
 	isActive bool
 	userName string
-	userId   uint32
+	userId   string
 	err      chan error
 }
 
@@ -39,14 +39,14 @@ func GetMessageClient() *MessageService {
 	var msg *MessageService
 	once.Do(func() {
 		msg = &MessageService{
-			connectInfo: make(map[uint32]ConnectInfo, 0),
+			connectInfo: make(map[string]ConnectInfo, 0),
 		}
 	})
 	return msg
 }
 
 func init() {
-	bufferedMessagesForUser.Messages = make(map[uint32][]*message_grpc.UserChatMessage, 0)
+	bufferedMessagesForUser.Messages = make(map[string][]*message_grpc.UserChatMessage, 0)
 }
 
 //Connect creates a stream from server to client for messaging
@@ -89,6 +89,7 @@ func (m *MessageService) SendMessage(ctx context.Context, in *message_grpc.UserC
 	//TODO: validate toId
 	fmt.Println("after printing to userid")
 	fmt.Println(m.connectInfo[toUserId])
+	fmt.Println(in.GetChatId())
 	if userInfo, ok := m.connectInfo[toUserId]; ok {
 		if userInfo.isActive {
 			if err := (*userInfo.stream).Send(in); err != nil {
@@ -130,7 +131,7 @@ func addMessageToBuffer(in *message_grpc.UserChatMessage) {
 	}
 }
 
-func (m *MessageService)sendAllBufferedMessagesToUser(userId uint32){
+func (m *MessageService)sendAllBufferedMessagesToUser(userId string){
      if val,ok := bufferedMessagesForUser.Messages[userId];ok{
 		 log.Printf("%+v",val)
 		 retryBuffer := make([]*message_grpc.UserChatMessage,0)
@@ -174,8 +175,8 @@ func (m *MessageService) SendMessageToAll(msg string) {
 		newMessage := message_grpc.UserChatMessage{
 			Nt:         message_grpc.UserChatMessage_MESSAGE,
 			IsGroup:    false,
-			FromUserId: 12121,
-			ToUserId:   12121,
+			FromUserId: "12121",
+			ToUserId:   "12121",
 			Msg: &message_grpc.Msg{
 				Message: "hello there",
 				MsgId:   "new mefd",
