@@ -7,8 +7,10 @@ import (
 	"log"
 	"sync"
 
-	"chatbot.com/internal/grpc/service/message"
 	"errors"
+
+	"chatbot.com/internal/grpc/service/message"
+	"chatbot.com/pkg/logger"
 )
 
 type BufferedMessagesForUser struct {
@@ -186,6 +188,58 @@ func (m *MessageService) SendMessageToAll(msg string) {
 			//user is offline/ not reachable , stream connection broke or something
 			fmt.Println(err)
 		}
+	}
+}
+
+
+func (m *MessageService) EmitWebRTCevents(context context.Context,in *message_grpc.EmitWebRTCeventsRequest)(*message_grpc.StatusOkResponse,error){
+    logging_ctx := "ICECANDIDATE"
+   logger.Log(logging_ctx).Debugf("Emitting ice candidates with request payload %+v",*in)
+   logger.Log(logging_ctx).Debugf("From user id :%s ... to user id = %s",in.FromUserId,in.ToUserId)
+    messageEvent := &message_grpc.UserChatMessage{
+	   Nt: message_grpc.UserChatMessage_ICECANDIDATE,
+	   IceCandidate: in.ICECandidate,
+	   FromUserId: in.FromUserId,
+	   ToUserId: in.ToUserId,
+	   DynamicJSONString: in.DynamicPayload,
+	}
+	toUserId := in.ToUserId
+	if userInfo, ok := m.connectInfo[toUserId]; ok {
+		if userInfo.isActive {
+			if err := (*userInfo.stream).Send(messageEvent); err != nil {
+			logger.Log(logging_ctx).Errorf("Error while sending ICE candidate %+v",err)
+				return &message_grpc.StatusOkResponse{
+					Err: &message_grpc.Error{
+						ErrorCode: 400,
+						ErrorMsg: "Error while sending ICE candidate request"+err.Error(),
+					},
+				},nil
+			} else {
+				logger.Log(logging_ctx).Debug("Successfully sent the ICE candidate to user "+ toUserId)
+				return &message_grpc.StatusOkResponse{
+				Message: "Successfully sent the ICE candidates",
+				},nil
+			}
+		} else {
+			return &message_grpc.StatusOkResponse{
+				Err: &message_grpc.Error{
+					ErrorCode: 400,
+					ErrorMsg: "User is notn active",
+				},
+			},nil
+		}
+	} else {
+		//TODO: we should be able to know if user exist or not
+		//at this point the user does not exist of we dont have an active connection
+		//buffer this user message , will send this later when connection is established
+		logger.Log(logging_ctx).Debugf("%+v", in)
+		logger.Log(logging_ctx).Debugf("used is not active add this is buffer")
+        return &message_grpc.StatusOkResponse{
+			Err: &message_grpc.Error{
+				ErrorCode: 400,
+				ErrorMsg: "User is not registered in the system",
+			},
+		},nil
 	}
 }
 

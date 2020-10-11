@@ -21,6 +21,7 @@ type MessageClient interface {
 	BroadCastMessage(ctx context.Context, in *UserChatMessage, opts ...grpc.CallOption) (*MsgSent, error)
 	SendMessage(ctx context.Context, in *UserChatMessage, opts ...grpc.CallOption) (*MsgSent, error)
 	RemoveConnection(ctx context.Context, in *UserById, opts ...grpc.CallOption) (*StatusOkResponse, error)
+	EmitWebRTCevents(ctx context.Context, in *EmitWebRTCeventsRequest, opts ...grpc.CallOption) (*StatusOkResponse, error)
 }
 
 type messageClient struct {
@@ -90,6 +91,15 @@ func (c *messageClient) RemoveConnection(ctx context.Context, in *UserById, opts
 	return out, nil
 }
 
+func (c *messageClient) EmitWebRTCevents(ctx context.Context, in *EmitWebRTCeventsRequest, opts ...grpc.CallOption) (*StatusOkResponse, error) {
+	out := new(StatusOkResponse)
+	err := c.cc.Invoke(ctx, "/message_grpc.Message/emitWebRTCevents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MessageServer is the server API for Message service.
 // All implementations must embed UnimplementedMessageServer
 // for forward compatibility
@@ -98,6 +108,7 @@ type MessageServer interface {
 	BroadCastMessage(context.Context, *UserChatMessage) (*MsgSent, error)
 	SendMessage(context.Context, *UserChatMessage) (*MsgSent, error)
 	RemoveConnection(context.Context, *UserById) (*StatusOkResponse, error)
+	EmitWebRTCevents(context.Context, *EmitWebRTCeventsRequest) (*StatusOkResponse, error)
 	MustEmbedUnimplementedMessageServer()
 }
 
@@ -117,7 +128,10 @@ func (*UnimplementedMessageServer) SendMessage(context.Context, *UserChatMessage
 func (*UnimplementedMessageServer) RemoveConnection(context.Context, *UserById) (*StatusOkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveConnection not implemented")
 }
-func (*UnimplementedMessageServer) MustEmbedUnimplementedMessageServer() {}
+func (*UnimplementedMessageServer) EmitWebRTCevents(context.Context, *EmitWebRTCeventsRequest) (*StatusOkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmitWebRTCevents not implemented")
+}
+func (*UnimplementedMessageServer) mustEmbedUnimplementedMessageServer() {}
 
 func RegisterMessageServer(s *grpc.Server, srv MessageServer) {
 	s.RegisterService(&_Message_serviceDesc, srv)
@@ -198,6 +212,24 @@ func _Message_RemoveConnection_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Message_EmitWebRTCevents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmitWebRTCeventsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServer).EmitWebRTCevents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/message_grpc.Message/EmitWebRTCevents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServer).EmitWebRTCevents(ctx, req.(*EmitWebRTCeventsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Message_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "message_grpc.Message",
 	HandlerType: (*MessageServer)(nil),
@@ -213,6 +245,10 @@ var _Message_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveConnection",
 			Handler:    _Message_RemoveConnection_Handler,
+		},
+		{
+			MethodName: "emitWebRTCevents",
+			Handler:    _Message_EmitWebRTCevents_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

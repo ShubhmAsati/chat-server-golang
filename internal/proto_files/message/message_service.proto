@@ -6,6 +6,7 @@ service Message{
     rpc BroadCastMessage(UserChatMessage) returns (MsgSent);
     rpc SendMessage(UserChatMessage) returns (MsgSent);
     rpc RemoveConnection(UserById) returns(StatusOkResponse);
+    rpc emitWebRTCevents(emitWebRTCeventsRequest) returns (StatusOkResponse);
 }
 
 message UserById{
@@ -22,6 +23,7 @@ message UserChatMessage{
         MESSAGE=0;
         IMAGE=1;
         FILE=2;
+        ICECANDIDATE=3;
     };
     notification_type nt=1;
     bool isGroup=2;
@@ -31,6 +33,8 @@ message UserChatMessage{
     string chatId=7;
     string sentUtcTimeStamp=8;
     string recivedUtdTimeStamp=9;
+    string iceCandidate=10;
+    string dynamicJSONString=11;
 }
 
 message MsgSent{
@@ -50,3 +54,10 @@ message StatusOkResponse{
    string errorDetails=3;
  }
  
+ message emitWebRTCeventsRequest {
+     string fromUserId=1;
+     string toUserId=2;
+     string ICECandidate=3;
+     string eventType=4;
+     string dynamicPayload=5;
+ }

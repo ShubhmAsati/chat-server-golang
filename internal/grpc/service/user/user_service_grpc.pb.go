@@ -136,7 +136,7 @@ func (*UnimplementedUserServiceServer) SearchUsersByUserName(context.Context, *G
 func (*UnimplementedUserServiceServer) GetExistingUserNames(context.Context, *GetExistingUserNamesRequest) (*GetExistingUserNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetExistingUserNames not implemented")
 }
-func (*UnimplementedUserServiceServer) MustEmbedUnimplementedUserServiceServer() {}
+func (*UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
 func RegisterUserServiceServer(s *grpc.Server, srv UserServiceServer) {
 	s.RegisterService(&_UserService_serviceDesc, srv)
