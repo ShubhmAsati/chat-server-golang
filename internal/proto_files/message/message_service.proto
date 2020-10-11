@@ -23,7 +23,7 @@ message UserChatMessage{
         MESSAGE=0;
         IMAGE=1;
         FILE=2;
-        ICECANDIDATE=3;
+        WEBRTCEVENT=3;
     };
     notification_type nt=1;
     bool isGroup=2;
@@ -35,6 +35,7 @@ message UserChatMessage{
     string recivedUtdTimeStamp=9;
     string iceCandidate=10;
     string dynamicJSONString=11;
+    string webRTCEventType=12;
 }
 
 message MsgSent{

@@ -197,11 +197,12 @@ func (m *MessageService) EmitWebRTCevents(context context.Context,in *message_gr
    logger.Log(logging_ctx).Debugf("Emitting ice candidates with request payload %+v",*in)
    logger.Log(logging_ctx).Debugf("From user id :%s ... to user id = %s",in.FromUserId,in.ToUserId)
     messageEvent := &message_grpc.UserChatMessage{
-	   Nt: message_grpc.UserChatMessage_ICECANDIDATE,
+	   Nt: message_grpc.UserChatMessage_WEBRTCEVENT,
 	   IceCandidate: in.ICECandidate,
 	   FromUserId: in.FromUserId,
 	   ToUserId: in.ToUserId,
 	   DynamicJSONString: in.DynamicPayload,
+	   WebRTCEventType: in.EventType,
 	}
 	toUserId := in.ToUserId
 	if userInfo, ok := m.connectInfo[toUserId]; ok {
